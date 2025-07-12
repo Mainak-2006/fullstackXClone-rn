@@ -1,0 +1,46 @@
+import axios, { AxiosInstance } from "axios";
+import { useAuth } from "@clerk/clerk-expo";
+
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "https://fullstack-x-clone-rn.vercel.app/api";
+
+export const createApiClient = (getToken: () => Promise<string | null>): AxiosInstance => {
+  const api = axios.create({ 
+    baseURL: API_BASE_URL,
+    headers: {
+      'Content-Type': 'application/json',
+      'User-Agent': 'mobile/1.0',
+      'Accept': 'application/json',
+    },
+    timeout: 10000, // 10 second timeout
+  });
+
+  api.interceptors.request.use(async (config) => {
+    const token = await getToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  });
+
+  // Add response interceptor for better error handling
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      console.error('API Error:', error.response?.data || error.message);
+      return Promise.reject(error);
+    }
+  );
+
+  return api;
+};
+
+export const useApiClient = (): AxiosInstance => {
+  const { getToken } = useAuth();
+  return createApiClient(getToken);
+};
+
+export const userApi = {
+  syncUser: (api: AxiosInstance) => api.post("/users/sync"),
+  getCurrentUser: (api: AxiosInstance) => api.get("/users/me"),
+  updateProfile: (api: AxiosInstance, data: any) => api.put("/users/profile", data),
+};
