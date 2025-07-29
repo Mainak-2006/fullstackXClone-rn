@@ -32,22 +32,42 @@ This project follows a monorepo structure with two main components:
 
 ## 🛠️ Tech Stack
 
-### Mobile App (React Native/Expo)
-- **Framework**: React Native with Expo SDK 53
-- **Routing**: Expo Router (file-based routing)
-- **Styling**: NativeWind (Tailwind CSS for React Native)
-- **State Management**: TanStack Query for server state
-- **Authentication**: Clerk for user management
-- **UI Components**: Custom components with Expo Vector Icons
+<div align="center">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React Native" width="60" height="60"/>
+  <img src="https://github.com/expo/expo/raw/main/packages/expo/resources/expo-icon.png" alt="Expo" width="60" height="60"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" width="60" height="60"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" alt="Express.js" width="60" height="60"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB" width="60" height="60"/>
+  <img src="https://images.clerk.com/static/logo-light-mode-400x400.png" alt="Clerk" width="60" height="60"/>
+  <img src="https://res.cloudinary.com/cloudinary-marketing/image/upload/f_auto,q_auto/v1599098500/creative_source/Logo/Cloud%20Glyph/cloudinary_cloud_glyph_blue.png" alt="Cloudinary" width="60" height="60"/>
+</div>
 
-### Backend API (Node.js)
-- **Runtime**: Node.js with ES modules
-- **Framework**: Express.js 5.x
-- **Database**: MongoDB with Mongoose ODM
-- **Authentication**: Clerk Express SDK
-- **File Upload**: Multer + Cloudinary
-- **Security**: Arcjet for rate limiting and protection
-- **Deployment**: Vercel-ready configuration
+### 📱 Frontend Technologies
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| ![React Native](https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg) **React Native** | Mobile app framework | 0.79.5 |
+| ![Expo](https://github.com/expo/expo/raw/main/packages/expo/resources/expo-icon.png) **Expo** | Development platform | SDK 53 |
+| ![TypeScript](https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg) **TypeScript** | Type safety | 5.8.3 |
+| **NativeWind** | Styling (Tailwind CSS) | 4.1.23 |
+| **TanStack Query** | Server state management | 5.83.0 |
+
+### 🔧 Backend Technologies
+| Technology | Purpose | Version |
+|------------|---------|---------|
+| ![Node.js](https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg) **Node.js** | Runtime environment | 18+ |
+| ![Express](https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg) **Express.js** | Web framework | 5.1.0 |
+| ![MongoDB](https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg) **MongoDB** | Database | 8.16.0 |
+| **Mongoose** | ODM for MongoDB | 8.16.0 |
+
+### 🔐 Services & Integrations
+| Service | Purpose | 
+|---------|---------|
+| ![Clerk](https://images.clerk.com/static/logo-light-mode-400x400.png) **Clerk** | Authentication & user management |
+| ![Cloudinary](https://res.cloudinary.com/cloudinary-marketing/image/upload/f_auto,q_auto/v1599098500/creative_source/Logo/Cloud%20Glyph/cloudinary_cloud_glyph_blue.png) **Cloudinary** | Image storage & optimization |
+| **Arcjet** | Security & rate limiting |
+| **Vercel** | Backend deployment |
+
+
 
 ## 🚀 Quick Start
 

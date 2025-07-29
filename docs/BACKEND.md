@@ -1,5 +1,12 @@
 # Backend Documentation
 
+<div align="center">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js" width="80" height="80"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/express/express-original.svg" alt="Express.js" width="80" height="80"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" alt="MongoDB" width="80" height="80"/>
+  <img src="https://images.clerk.com/static/logo-light-mode-400x400.png" alt="Clerk" width="80" height="80"/>
+</div>
+
 ## Overview
 
 The backend is a RESTful API built with Node.js and Express.js, providing endpoints for user management, posts, comments, and notifications. It uses MongoDB for data persistence and integrates with Clerk for authentication, Cloudinary for image storage, and Arcjet for security.
