@@ -4,7 +4,7 @@ import { useAuth } from "@clerk/clerk-expo";
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const createApiClient = (getToken: () => Promise<string | null>): AxiosInstance => {
-  const api = axios.create({ 
+  const api = axios.create({
     baseURL: API_BASE_URL,
     headers: {
       'Content-Type': 'application/json',
@@ -63,4 +63,11 @@ export const followApi = {
   unfollowUser: (api: AxiosInstance, userId: string) => api.post(`/users/${userId}/unfollow`),
   getFollowers: (api: AxiosInstance, userId: string) => api.get(`/users/${userId}/followers`),
   getFollowing: (api: AxiosInstance, userId: string) => api.get(`/users/${userId}/following`),
+};
+
+export const messageApi = {
+  getUsers: (api: AxiosInstance) => api.get("/messages/users"),
+  getMessages: (api: AxiosInstance, userId: string) => api.get(`/messages/${userId}`),
+  sendMessage: (api: AxiosInstance, userId: string, data: { text: string; image?: string }) =>
+    api.post(`/messages/send/${userId}`, data),
 };

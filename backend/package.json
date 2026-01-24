@@ -21,6 +21,7 @@
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
     "mongoose": "^8.16.0",
-    "multer": "^2.0.1"
+    "multer": "^2.0.1",
+    "socket.io": "^4.8.3"
   }
 }
