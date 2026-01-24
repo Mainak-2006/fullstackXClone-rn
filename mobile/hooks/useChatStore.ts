@@ -28,6 +28,7 @@ interface ChatState {
     isMessagesLoading: boolean;
     onlineUsers: string[];
     socket: Socket | null;
+    currentUserId: string | null;
 
     getUsers: (api: AxiosInstance) => Promise<void>;
     getMessages: (api: AxiosInstance, userId: string) => Promise<void>;
@@ -39,7 +40,7 @@ interface ChatState {
     unsubscribeFromMessages: () => void;
 }
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL|| "http://localhost:5001";
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:5001";
 
 export const useChatStore = create<ChatState>((set, get) => ({
     messages: [],
@@ -49,6 +50,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     isMessagesLoading: false,
     onlineUsers: [],
     socket: null,
+    currentUserId: null,
 
     getUsers: async (api) => {
         set({ isUsersLoading: true });
@@ -56,7 +58,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             const res = await messageApi.getUsers(api);
             set({ users: res.data });
         } catch (error: any) {
-            console.error("Error fetching users:", error.response?.data?.message || error.message);
+            // Error handled by store state
         } finally {
             set({ isUsersLoading: false });
         }
@@ -68,7 +70,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             const res = await messageApi.getMessages(api, userId);
             set({ messages: res.data });
         } catch (error: any) {
-            console.error("Error fetching messages:", error.response?.data?.message || error.message);
+            // Error handled by store state
         } finally {
             set({ isMessagesLoading: false });
         }
@@ -82,7 +84,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
             const res = await messageApi.sendMessage(api, selectedUser._id, messageData);
             set({ messages: [...messages, res.data] });
         } catch (error: any) {
-            console.error("Error sending message:", error.response?.data?.message || error.message);
+            // Error handled by store state
         }
     },
 
@@ -92,14 +94,17 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const { socket } = get();
         if (socket?.connected) return;
 
-        const newSocket = io(BASE_URL, {
+        // Strip /api from the URL for socket connection if it exists
+        const socketUrl = BASE_URL.endsWith("/api") ? BASE_URL.replace(/\/api$/, "") : BASE_URL;
+
+        const newSocket = io(socketUrl, {
             query: {
                 userId: userId,
             },
         });
         newSocket.connect();
 
-        set({ socket: newSocket });
+        set({ socket: newSocket, currentUserId: userId });
 
         newSocket.on("getOnlineUsers", (userIds) => {
             set({ onlineUsers: userIds });
@@ -116,8 +121,14 @@ export const useChatStore = create<ChatState>((set, get) => ({
         if (!socket || !selectedUser) return;
 
         socket.on("newMessage", (newMessage) => {
-            // only add message if it's from the currently selected user
-            if (newMessage.senderId !== selectedUser._id) return;
+            const { currentUserId } = get();
+            // only add message if it belongs to the currently selected conversation
+            const isRelevant =
+                (newMessage.senderId === selectedUser._id && newMessage.receiverId === currentUserId) ||
+                (newMessage.senderId === currentUserId && newMessage.receiverId === selectedUser._id);
+
+            if (!isRelevant) return;
+
             set({
                 messages: [...get().messages, newMessage],
             });

@@ -27,7 +27,11 @@ export const getMessages = asyncHandler(async (req, res) => {
     const { userId: clerkId } = getAuth(req);
     const { id: userToChatId } = req.params;
 
-    const currentUserId = (await User.findOne({ clerkId }))._id;
+    const loggedInUser = await User.findOne({ clerkId });
+    if (!loggedInUser) {
+        return res.status(404).json({ error: "User not found" });
+    }
+    const currentUserId = loggedInUser._id;
 
     const messages = await Message.find({
         $or: [

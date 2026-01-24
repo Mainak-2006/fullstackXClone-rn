@@ -26,7 +26,6 @@ export const createApiClient = (getToken: () => Promise<string | null>): AxiosIn
   api.interceptors.response.use(
     (response) => response,
     (error) => {
-      console.error('API Error:', error.response?.data || error.message);
       return Promise.reject(error);
     }
   );
@@ -59,8 +58,8 @@ export const commentApi = {
 };
 
 export const followApi = {
-  followUser: (api: AxiosInstance, userId: string) => api.post(`/users/${userId}/follow`),
-  unfollowUser: (api: AxiosInstance, userId: string) => api.post(`/users/${userId}/unfollow`),
+  followUser: (api: AxiosInstance, userId: string) => api.post(`/users/follow/${userId}`),
+  unfollowUser: (api: AxiosInstance, userId: string) => api.post(`/users/unfollow/${userId}`),
   getFollowers: (api: AxiosInstance, userId: string) => api.get(`/users/${userId}/followers`),
   getFollowing: (api: AxiosInstance, userId: string) => api.get(`/users/${userId}/following`),
 };
@@ -70,4 +69,10 @@ export const messageApi = {
   getMessages: (api: AxiosInstance, userId: string) => api.get(`/messages/${userId}`),
   sendMessage: (api: AxiosInstance, userId: string, data: { text: string; image?: string }) =>
     api.post(`/messages/send/${userId}`, data),
+};
+
+export const notificationApi = {
+  getNotifications: (api: AxiosInstance) => api.get("/notifications"),
+  deleteNotification: (api: AxiosInstance, notificationId: string) =>
+    api.delete(`/notifications/${notificationId}`),
 };

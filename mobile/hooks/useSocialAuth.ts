@@ -17,21 +17,15 @@ export const useSocialAuth = () => {
         strategy === "oauth_google"
           ? startGoogleOAuth
           : strategy === "oauth_apple"
-          ? startAppleOAuth
-          : startFacebookOAuth;
-      
+            ? startAppleOAuth
+            : startFacebookOAuth;
+
       const { createdSessionId, setActive } = await startOAuthFlow();
-      
+
       if (createdSessionId && typeof setActive === "function") {
         await setActive({ session: createdSessionId });
-        console.log("OAuth successful, session created");
-      } else if (createdSessionId) {
-        console.log("OAuth completed, session created, but setActive is unavailable");
-      } else {
-        console.log("OAuth completed but no session created");
       }
     } catch (err: any) {
-      console.log("Error in social auth:", err);
       const provider =
         strategy === "oauth_google" ? "Google" : strategy === "oauth_apple" ? "Apple" : "Facebook";
       Alert.alert("Error", `Failed to sign in with ${provider}. Please try again.`);
@@ -39,6 +33,6 @@ export const useSocialAuth = () => {
       setIsLoading(false);
     }
   };
-  
+
   return { isLoading, handleSocialAuth };
 };

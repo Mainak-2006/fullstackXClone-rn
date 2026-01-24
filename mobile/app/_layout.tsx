@@ -8,6 +8,8 @@ import { useInitializeChat } from "../hooks/useInitializeChat";
 
 const queryClient = new QueryClient();
 
+const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
 function RootLayoutInner() {
   useInitializeChat();
 
@@ -20,8 +22,12 @@ function RootLayoutInner() {
 }
 
 export default function RootLayout() {
+  if (!CLERK_PUBLISHABLE_KEY) {
+    throw new Error("Missing Clerk Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env file.");
+  }
+
   return (
-    <ClerkProvider tokenCache={tokenCache}>
+    <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
       <QueryClientProvider client={queryClient}>
         <RootLayoutInner />
         <StatusBar style="dark" />
