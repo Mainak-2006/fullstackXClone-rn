@@ -62,13 +62,40 @@ export default function App() {
                   <View className="flex-row items-center justify-center">
                     <Image
                       source={require("../../assets/images/apple.png")}
-                      className="size-8 mr-3"
+                      className="size-8 mr-6 px-4"
                       resizeMode="contain"
                     />
                     <Text className="text-black font-medium text-base">
                       Continue with Apple</Text>
                   </View>
                 )}
+            </TouchableOpacity>
+
+            {/*FACEBOOK SIGNIN BUTTON*/}
+            <TouchableOpacity
+              className="flex-row items-center justify-center bg-white border border-gray-300 rounded-full py-4 px-6"
+              onPress={() => handleSocialAuth("oauth_facebook")}
+              disabled={isLoading}
+              style={{
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 1 },
+                shadowOpacity: 0.1,
+                shadowRadius: 2,
+                elevation: 2,
+              }}
+            >
+              {isLoading ? (
+                <ActivityIndicator size="small" color="#000" />
+              ) : (
+                <View className="flex-row items-center justify-center">
+                  <View className="w-8 h-8  rounded-full bg-[#1877F2] items-center justify-center mr-3">
+                    <Text className="text-white font-bold text-base">f</Text>
+                  </View>
+                  <Text className="text-black font-medium text-base">
+                    Continue with Facebook
+                  </Text>
+                </View>
+              )}
             </TouchableOpacity>
           </View>
           {/* Terms and Privacy */}

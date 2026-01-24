@@ -6,11 +6,19 @@ export const useSocialAuth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { startOAuthFlow: startGoogleOAuth } = useOAuth({ strategy: "oauth_google" });
   const { startOAuthFlow: startAppleOAuth } = useOAuth({ strategy: "oauth_apple" });
+  const { startOAuthFlow: startFacebookOAuth } = useOAuth({ strategy: "oauth_facebook" });
 
-  const handleSocialAuth = async (strategy: "oauth_google" | "oauth_apple") => {
+  const handleSocialAuth = async (
+    strategy: "oauth_google" | "oauth_apple" | "oauth_facebook"
+  ) => {
     setIsLoading(true);
     try {
-      const startOAuthFlow = strategy === "oauth_google" ? startGoogleOAuth : startAppleOAuth;
+      const startOAuthFlow =
+        strategy === "oauth_google"
+          ? startGoogleOAuth
+          : strategy === "oauth_apple"
+          ? startAppleOAuth
+          : startFacebookOAuth;
       
       const { createdSessionId, setActive } = await startOAuthFlow();
       
@@ -24,7 +32,8 @@ export const useSocialAuth = () => {
       }
     } catch (err: any) {
       console.log("Error in social auth:", err);
-      const provider = strategy === "oauth_google" ? "Google" : "Apple";
+      const provider =
+        strategy === "oauth_google" ? "Google" : strategy === "oauth_apple" ? "Apple" : "Facebook";
       Alert.alert("Error", `Failed to sign in with ${provider}. Please try again.`);
     } finally {
       setIsLoading(false);

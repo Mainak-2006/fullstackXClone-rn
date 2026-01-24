@@ -57,3 +57,10 @@ export const commentApi = {
   createComment: (api: AxiosInstance, postId: string, content: string) =>
     api.post(`/comments/post/${postId}`, { content }),
 };
+
+export const followApi = {
+  followUser: (api: AxiosInstance, userId: string) => api.post(`/users/${userId}/follow`),
+  unfollowUser: (api: AxiosInstance, userId: string) => api.post(`/users/${userId}/unfollow`),
+  getFollowers: (api: AxiosInstance, userId: string) => api.get(`/users/${userId}/followers`),
+  getFollowing: (api: AxiosInstance, userId: string) => api.get(`/users/${userId}/following`),
+};

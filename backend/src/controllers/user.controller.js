@@ -100,3 +100,47 @@ export const followUser = asyncHandler(async (req, res) => {
     message: isFollowing ? "User unfollowed successfully" : "User followed successfully",
   });
 });
+
+export const unfollowUser = asyncHandler(async (req, res) => {
+  const { userId } = getAuth(req);
+  const { targetUserId } = req.params;
+
+  if (userId === targetUserId) return res.status(400).json({ error: "You cannot unfollow yourself" });
+
+  const currentUser = await User.findOne({ clerkId: userId });
+  const targetUser = await User.findById(targetUserId);
+
+  if (!currentUser || !targetUser) return res.status(404).json({ error: "User not found" });
+
+  const isFollowing = currentUser.following.includes(targetUserId);
+
+  if (!isFollowing) return res.status(400).json({ error: "You are not following this user" });
+
+  // unfollow
+  await User.findByIdAndUpdate(currentUser._id, {
+    $pull: { following: targetUserId },
+  });
+  await User.findByIdAndUpdate(targetUserId, {
+    $pull: { followers: currentUser._id },
+  });
+
+  res.status(200).json({ message: "User unfollowed successfully" });
+});
+
+export const getFollowers = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = await User.findById(userId).populate("followers", "username profilePicture");
+
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  res.status(200).json({ followers: user.followers });
+});
+
+export const getFollowing = asyncHandler(async (req, res) => {
+  const { userId } = req.params;
+  const user = await User.findById(userId).populate("following", "username profilePicture");
+
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  res.status(200).json({ following: user.following });
+});

@@ -5,6 +5,9 @@ import {
   getUserProfile,
   syncUser,
   updateProfile,
+  unfollowUser,
+  getFollowers,
+  getFollowing,
 } from "../controllers/user.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 
@@ -18,5 +21,8 @@ router.post("/sync", protectRoute, syncUser);
 router.get("/me", protectRoute, getCurrentUser);
 router.put("/profile", protectRoute, updateProfile);
 router.post("/follow/:targetUserId", protectRoute, followUser);
+router.post("/unfollow/:targetUserId", protectRoute, unfollowUser);
+router.get("/:userId/followers", protectRoute, getFollowers);
+router.get("/:userId/following", protectRoute, getFollowing);
 
 export default router;
