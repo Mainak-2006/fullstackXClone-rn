@@ -66,13 +66,6 @@ export const followApi = {
   getFollowing: (api: AxiosInstance, userId: string) => api.get(`/users/${userId}/following`),
 };
 
-export const messageApi = {
-  getUsers: (api: AxiosInstance) => api.get("/messages/users"),
-  getMessages: (api: AxiosInstance, userId: string) => api.get(`/messages/${userId}`),
-  sendMessage: (api: AxiosInstance, userId: string, data: { text: string; image?: string }) =>
-    api.post(`/messages/send/${userId}`, data),
-};
-
 export const notificationApi = {
   getNotifications: (api: AxiosInstance) => api.get("/notifications"),
   deleteNotification: (api: AxiosInstance, notificationId: string) =>

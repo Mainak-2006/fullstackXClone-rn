@@ -2,13 +2,11 @@ import { Redirect, Tabs } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "@clerk/clerk-expo";
-import { useInitializeChat } from "../../hooks/useInitializeChat";
 
 const TabsLayout = () => {
   const insets = useSafeAreaInsets();
 
   const { isSignedIn, isLoaded } = useAuth();
-  useInitializeChat();
 
   if (!isLoaded) return null;
 
@@ -52,13 +50,7 @@ const TabsLayout = () => {
           tabBarIcon: ({ color, size }) => <Feather name="bell" size={size} color={color} />,
         }}
       />
-      <Tabs.Screen
-        name="messages"
-        options={{
-          title: "",
-          tabBarIcon: ({ color, size }) => <Feather name="mail" size={size} color={color} />,
-        }}
-      />
+
       <Tabs.Screen
         name="profile"
         options={{
