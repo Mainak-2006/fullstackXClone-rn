@@ -18,6 +18,21 @@ app.set('trust proxy', 1);
 
 app.use(clerkMiddleware());
 
+// Database connection middleware - ensures DB is connected for each serverless invocation
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (error) {
+    console.error("Database connection failed:", error);
+    return res.status(503).json({
+      error: {
+        code: "503",
+        message: "Database unavailable. Please try again later."
+      }
+    });
+  }
+});
 
 app.get("/", (req, res) => res.send("Hello from X Server"));
 
@@ -27,9 +42,23 @@ app.use("/api/comments", commentRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 
+// Enhanced error handler with detailed logging
 app.use((err, req, res, next) => {
-  console.error("Unhandled error:", err);
-  res.status(500).json({ error: err.message || "Internal server error" });
+  console.error("Unhandled error:", {
+    message: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method,
+    body: req.body,
+  });
+
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    error: {
+      code: String(statusCode),
+      message: err.message || "A server error has occurred"
+    }
+  });
 });
 
 const startServer = async () => {
@@ -43,6 +72,10 @@ const startServer = async () => {
     process.exit(1);
   }
 };
-startServer();
+
+// Only start server if not in Vercel serverless environment
+if (process.env.NODE_ENV !== 'production') {
+  startServer();
+}
 
 export default app;

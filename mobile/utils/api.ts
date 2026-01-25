@@ -4,14 +4,23 @@ import { useAuth } from "@clerk/clerk-expo";
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const createApiClient = (getToken: () => Promise<string | null>): AxiosInstance => {
+  // Normalize the base URL - remove trailing slash to avoid redirect issues
+  const normalizedBaseURL = API_BASE_URL?.replace(/\/$/, '');
+
   const api = axios.create({
-    baseURL: API_BASE_URL,
+    baseURL: normalizedBaseURL,
     headers: {
       'Content-Type': 'application/json',
       'User-Agent': 'mobile/1.0',
       'Accept': 'application/json',
     },
     timeout: 10000, // 10 second timeout
+    maxRedirects: 5, // Handle redirects properly (default is 5)
+    validateStatus: (status) => {
+      // Accept all status codes between 200-299
+      // Reject 300-level codes which indicate redirects that weren't followed
+      return status >= 200 && status < 300;
+    },
   });
 
   api.interceptors.request.use(async (config) => {
@@ -26,10 +35,32 @@ export const createApiClient = (getToken: () => Promise<string | null>): AxiosIn
   api.interceptors.response.use(
     (response) => response,
     (error) => {
+      // Enhanced error logging for debugging
+      if (error.response) {
+        // Server responded with error status
+        console.error('API Error Response:', {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          url: error.config?.url,
+          baseURL: error.config?.baseURL,
+          method: error.config?.method,
+          data: error.response.data,
+        });
+      } else if (error.request) {
+        // Request was made but no response received
+        console.error('API No Response:', {
+          url: error.config?.url,
+          baseURL: error.config?.baseURL,
+          method: error.config?.method,
+          message: error.message,
+        });
+      } else {
+        // Error in setting up the request
+        console.error('API Request Setup Error:', error.message);
+      }
       return Promise.reject(error);
     }
   );
-
   return api;
 };
 
