@@ -51,6 +51,9 @@ export const sendMessage = asyncHandler(async (req, res) => {
     const { userId: clerkId } = getAuth(req);
 
     const currentUser = await User.findOne({ clerkId });
+    if (!currentUser) {
+        return res.status(404).json({ error: "User not found" });
+    }
     const senderId = currentUser._id;
 
     // Check if they are mutual followers

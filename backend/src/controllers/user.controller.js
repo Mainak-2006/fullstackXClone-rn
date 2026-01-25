@@ -67,7 +67,8 @@ export const followUser = asyncHandler(async (req, res) => {
   const currentUser = await User.findOne({ clerkId: userId });
   const targetUser = await User.findById(targetUserId);
 
-  if (!currentUser || !targetUser) return res.status(404).json({ error: "User not found" });
+  if (!currentUser) return res.status(404).json({ error: "Current user not found" });
+  if (!targetUser) return res.status(404).json({ error: "Target user not found" });
 
   const isFollowing = currentUser.following.includes(targetUserId);
 
@@ -149,16 +150,25 @@ export const getFollowing = asyncHandler(async (req, res) => {
 export const searchUsers = asyncHandler(async (req, res) => {
   const { query } = req.query;
   const { userId: clerkId } = getAuth(req);
+
   const currentUser = await User.findOne({ clerkId });
+
+  if (!currentUser) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  // Ensure query is a string and escape special characters
+  const queryStr = String(query || "");
+  const escapedQuery = queryStr.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
   const users = await User.find({
     $and: [
       { _id: { $ne: currentUser._id } },
       {
         $or: [
-          { username: { $regex: query, $options: "i" } },
-          { firstName: { $regex: query, $options: "i" } },
-          { lastName: { $regex: query, $options: "i" } },
+          { username: { $regex: escapedQuery, $options: "i" } },
+          { firstName: { $regex: escapedQuery, $options: "i" } },
+          { lastName: { $regex: escapedQuery, $options: "i" } },
         ],
       },
     ],
