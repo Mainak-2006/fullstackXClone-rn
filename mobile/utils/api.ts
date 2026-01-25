@@ -44,6 +44,11 @@ export const userApi = {
   updateProfile: (api: AxiosInstance, data: any) => api.put("/users/profile", data),
   searchUsers: (api: AxiosInstance, query: string) => api.get(`/users/search-users?query=${query}`),
   followUser: (api: AxiosInstance, userId: string) => api.post(`/users/follow/${userId}`),
+  saveSearchHistory: (api: AxiosInstance, query: string, searchedUserId?: string) =>
+    api.post("/users/search-history", { query, searchedUserId }),
+  getSearchHistory: (api: AxiosInstance) => api.get("/users/search-history"),
+  clearSearchHistory: (api: AxiosInstance, id?: string) =>
+    api.delete(`/users/search-history${id ? `/${id}` : ""}`),
 };
 export const postApi = {
   createPost: (api: AxiosInstance, data: { content: string; image?: string }) =>

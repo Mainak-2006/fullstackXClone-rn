@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
 import Notification from "../models/notification.model.js";
+import SearchHistory from "../models/search-history.model.js";
 
 import { getAuth } from "@clerk/express";
 import { clerkClient } from "@clerk/express";
@@ -177,4 +178,65 @@ export const searchUsers = asyncHandler(async (req, res) => {
     .limit(20);
 
   res.status(200).json(users);
+});
+
+// Search History functions
+export const saveSearchHistory = asyncHandler(async (req, res) => {
+  const { userId } = getAuth(req);
+  const { query, searchedUserId } = req.body;
+
+  if (!query || !query.trim()) {
+    return res.status(400).json({ error: "Query is required" });
+  }
+
+  const currentUser = await User.findOne({ clerkId: userId });
+  if (!currentUser) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  // Create search history entry
+  const searchHistory = await SearchHistory.create({
+    userId: currentUser._id,
+    query: query.trim(),
+    searchedUserId: searchedUserId || null,
+  });
+
+  res.status(201).json({ message: "Search history saved", searchHistory });
+});
+
+export const getSearchHistory = asyncHandler(async (req, res) => {
+  const { userId } = getAuth(req);
+
+  const currentUser = await User.findOne({ clerkId: userId });
+  if (!currentUser) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  // Get unique search history (latest per query) with user details
+  const searchHistory = await SearchHistory.find({ userId: currentUser._id })
+    .populate("searchedUserId", "username firstName lastName profilePicture")
+    .sort({ createdAt: -1 })
+    .limit(20);
+
+  res.status(200).json({ searchHistory });
+});
+
+export const clearSearchHistory = asyncHandler(async (req, res) => {
+  const { userId } = getAuth(req);
+  const { id } = req.params;
+
+  const currentUser = await User.findOne({ clerkId: userId });
+  if (!currentUser) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  if (id) {
+    // Delete specific item
+    await SearchHistory.findOneAndDelete({ _id: id, userId: currentUser._id });
+    res.status(200).json({ message: "Search history item deleted" });
+  } else {
+    // Delete all history for user
+    await SearchHistory.deleteMany({ userId: currentUser._id });
+    res.status(200).json({ message: "All search history cleared" });
+  }
 });

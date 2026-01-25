@@ -9,6 +9,9 @@ import {
   getFollowers,
   getFollowing,
   searchUsers,
+  saveSearchHistory,
+  getSearchHistory,
+  clearSearchHistory,
 } from "../controllers/user.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 
@@ -26,5 +29,10 @@ router.post("/unfollow/:targetUserId", protectRoute, unfollowUser);
 router.get("/:userId/followers", protectRoute, getFollowers);
 router.get("/:userId/following", protectRoute, getFollowing);
 router.get("/search-users", protectRoute, searchUsers);
+
+// Search History routes
+router.post("/search-history", protectRoute, saveSearchHistory);
+router.get("/search-history", protectRoute, getSearchHistory);
+router.delete("/search-history/:id?", protectRoute, clearSearchHistory);
 
 export default router;

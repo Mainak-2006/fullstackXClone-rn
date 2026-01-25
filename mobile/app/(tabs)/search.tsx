@@ -4,6 +4,8 @@ import { View, TextInput, ScrollView, Text, TouchableOpacity, Image, ActivityInd
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useApiClient, userApi } from "../../utils/api";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { useSearchHistory } from "../../hooks/useSearchHistory";
+import { useRouter } from "expo-router";
 
 const TRENDING_TOPICS = [
   { topic: "#ReactNative", tweets: "125K" },
@@ -19,6 +21,8 @@ const SearchScreen = () => {
   const [loading, setLoading] = useState(false);
   const api = useApiClient();
   const { currentUser, refetch: refetchMe } = useCurrentUser();
+  const { history, saveHistory, clearHistory } = useSearchHistory();
+  const router = useRouter();
 
   useEffect(() => {
     const search = async () => {
@@ -45,13 +49,33 @@ const SearchScreen = () => {
     try {
       await userApi.followUser(api, userId);
       // Refresh user list to update follow status locally
-      // In a real app we'd use React Query or update state manually
       const res = await userApi.searchUsers(api, query);
       setUsers(res.data);
       refetchMe();
     } catch (error) {
       console.error("Follow error:", error);
     }
+  };
+
+  const handleUserClick = (user: any) => {
+    // Save to search history
+    saveHistory(query, user._id);
+    // Navigate to user profile
+    router.push(`/profile?username=${user.username}`);
+  };
+
+  const handleHistoryClick = (historyItem: any) => {
+    if (historyItem.searchedUserId) {
+      // Navigate directly to the user's profile
+      router.push(`/profile?username=${historyItem.searchedUserId.username}`);
+    } else {
+      // Fill the search bar with the query
+      setQuery(historyItem.query);
+    }
+  };
+
+  const handleClearHistory = (id?: string) => {
+    clearHistory(id);
   };
 
   return (
@@ -67,6 +91,11 @@ const SearchScreen = () => {
             value={query}
             onChangeText={setQuery}
           />
+          {query.length > 0 && (
+            <TouchableOpacity onPress={() => setQuery("")}>
+              <Feather name="x-circle" size={20} color="#657786" />
+            </TouchableOpacity>
+          )}
         </View>
       </View>
 
@@ -74,6 +103,51 @@ const SearchScreen = () => {
         {loading && (
           <View className="p-4 items-center">
             <ActivityIndicator color="#1DA1F2" />
+          </View>
+        )}
+
+        {/* Search History - Show when no query */}
+        {!loading && query.trim() === "" && history.length > 0 && (
+          <View className="border-b border-gray-100">
+            <View className="flex-row justify-between items-center p-4">
+              <Text className="text-xl font-bold text-gray-900">Recent Searches</Text>
+              <TouchableOpacity onPress={() => handleClearHistory()}>
+                <Text className="text-blue-500 font-semibold">Clear all</Text>
+              </TouchableOpacity>
+            </View>
+            {history.map((item) => (
+              <View key={item._id} className="flex-row items-center px-4 py-3 border-b border-gray-50">
+                <TouchableOpacity
+                  className="flex-1 flex-row items-center"
+                  onPress={() => handleHistoryClick(item)}
+                >
+                  <Feather name="clock" size={20} color="#657786" className="mr-3" />
+                  {item.searchedUserId ? (
+                    <View className="flex-1 flex-row items-center ml-3">
+                      <Image
+                        source={{
+                          uri:
+                            item.searchedUserId.profilePicture ||
+                            "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png",
+                        }}
+                        className="size-10 rounded-full mr-3"
+                      />
+                      <View className="flex-1">
+                        <Text className="font-semibold text-gray-900">
+                          {item.searchedUserId.firstName} {item.searchedUserId.lastName}
+                        </Text>
+                        <Text className="text-gray-500 text-sm">@{item.searchedUserId.username}</Text>
+                      </View>
+                    </View>
+                  ) : (
+                    <Text className="flex-1 text-gray-900 ml-3">{item.query}</Text>
+                  )}
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => handleClearHistory(item._id)}>
+                  <Feather name="x" size={18} color="#657786" />
+                </TouchableOpacity>
+              </View>
+            ))}
           </View>
         )}
 
@@ -89,9 +163,17 @@ const SearchScreen = () => {
             {users.map((user) => {
               const isFollowing = currentUser?.following?.includes(user._id);
               return (
-                <View key={user._id} className="flex-row items-center p-4 border-b border-gray-50">
+                <TouchableOpacity
+                  key={user._id}
+                  onPress={() => handleUserClick(user)}
+                  className="flex-row items-center p-4 border-b border-gray-50"
+                >
                   <Image
-                    source={{ uri: user.profilePicture || "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png" }}
+                    source={{
+                      uri:
+                        user.profilePicture ||
+                        "https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png",
+                    }}
                     className="size-12 rounded-full mr-3"
                   />
                   <View className="flex-1">
@@ -101,7 +183,10 @@ const SearchScreen = () => {
                     <Text className="text-gray-500">@{user.username}</Text>
                   </View>
                   <TouchableOpacity
-                    onPress={() => handleFollow(user._id)}
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      handleFollow(user._id);
+                    }}
                     className={`px-4 py-1.5 rounded-full border ${isFollowing ? "bg-white border-gray-300" : "bg-black border-black"
                       }`}
                   >
@@ -109,22 +194,25 @@ const SearchScreen = () => {
                       {isFollowing ? "Following" : "Follow"}
                     </Text>
                   </TouchableOpacity>
-                </View>
+                </TouchableOpacity>
               );
             })}
           </View>
         )}
 
-        <View className="p-4">
-          <Text className="text-xl font-bold text-gray-900 mb-4">Trending for you</Text>
-          {TRENDING_TOPICS.map((item, index) => (
-            <TouchableOpacity key={index} className="py-3 border-b border-gray-100">
-              <Text className="text-gray-500 text-sm">Trending in Technology</Text>
-              <Text className="font-bold text-gray-900 text-lg">{item.topic}</Text>
-              <Text className="text-gray-500 text-sm">{item.tweets} Tweets</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+        {/* Show trending topics when no search query */}
+        {query.trim() === "" && (
+          <View className="p-4">
+            <Text className="text-xl font-bold text-gray-900 mb-4">Trending for you</Text>
+            {TRENDING_TOPICS.map((item, index) => (
+              <TouchableOpacity key={index} className="py-3 border-b border-gray-100">
+                <Text className="text-gray-500 text-sm">Trending in Technology</Text>
+                <Text className="font-bold text-gray-900 text-lg">{item.topic}</Text>
+                <Text className="text-gray-500 text-sm">{item.tweets} Tweets</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

@@ -53,3 +53,17 @@ export interface Message {
   image?: string;
   createdAt: string;
 }
+
+export interface SearchHistory {
+  _id: string;
+  userId: string;
+  query: string;
+  searchedUserId?: {
+    _id: string;
+    username: string;
+    firstName: string;
+    lastName: string;
+    profilePicture?: string;
+  };
+  createdAt: string;
+}
