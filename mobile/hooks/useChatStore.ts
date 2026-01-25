@@ -88,14 +88,15 @@ export const useChatStore = create<ChatState>((set, get) => ({
         if (socket?.connected) return;
 
         // Strip /api from the URL for socket connection if it exists
-        const socketUrl = BASE_URL.endsWith("/api") ? BASE_URL.replace(/\/api$/, "") : BASE_URL;
+        const socketUrl = BASE_URL;
         console.log("Connecting to socket at:", socketUrl, "with userId:", userId);
 
         const newSocket = io(socketUrl, {
             query: {
                 userId: userId,
             },
-            transports: ["websocket"], // Force websocket for better compatibility in React Native
+            transports: ["websocket", "polling"], // Try websocket first, fallback to polling
+            forceNew: true,
         });
 
         newSocket.on("connect", () => {

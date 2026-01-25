@@ -1,7 +1,6 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
-import Conversation from "../models/conversation.model.js";
 import { getAuth } from "@clerk/express";
 import cloudinary from "../config/cloudinary.js";
 import { getReceiverSocketId, io } from "../lib/socket.js";
