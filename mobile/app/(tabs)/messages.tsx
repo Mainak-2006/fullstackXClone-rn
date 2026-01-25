@@ -9,7 +9,7 @@ import {
   ScrollView,
   Image,
   Modal,
-  ActivityIndicator,
+
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useChatStore } from "../../hooks/useChatStore";
@@ -27,8 +27,7 @@ const MessagesScreen = () => {
     users,
     messages,
     selectedUser,
-    isUsersLoading,
-    isMessagesLoading,
+
     getUsers,
     getMessages,
     sendMessage,
@@ -108,11 +107,7 @@ const MessagesScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}
       >
-        {isUsersLoading ? (
-          <View className="py-10">
-            <ActivityIndicator size="small" color="#1DA1F2" />
-          </View>
-        ) : filteredUsers.length === 0 ? (
+        {filteredUsers.length === 0 ? (
           <View className="flex-1 items-center justify-center p-10">
             <Text className="text-gray-500 text-center">No users found</Text>
           </View>
@@ -157,7 +152,7 @@ const MessagesScreen = () => {
             user={selectedUser}
             messages={messages}
             currentUserId={currentUser?._id}
-            isMessagesLoading={isMessagesLoading}
+
             isOnline={onlineUsers.includes(selectedUser._id)}
             onBack={closeChatModal}
             newMessage={newMessage}

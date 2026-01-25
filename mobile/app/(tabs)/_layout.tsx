@@ -2,6 +2,7 @@ import { Redirect, Tabs } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAuth } from "@clerk/clerk-expo";
+import { useInitializeChat } from "../../hooks/useInitializeChat";
 
 const TabsLayout = () => {
   const insets = useSafeAreaInsets();
@@ -11,6 +12,8 @@ const TabsLayout = () => {
   if (!isLoaded) return null;
 
   if (!isSignedIn) return <Redirect href="/(auth)" />;
+
+  useInitializeChat();
 
   return (
     <Tabs
@@ -22,8 +25,9 @@ const TabsLayout = () => {
           borderTopWidth: 1,
           borderTopColor: "#E1E8ED",
           height: 60 + insets.bottom,
-          paddingTop: 10,
-          marginBottom: 6
+        },
+        tabBarItemStyle: {
+          paddingTop: 8,
         },
         headerShown: false,
       }}

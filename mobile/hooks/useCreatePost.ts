@@ -69,9 +69,9 @@ export const useCreatePost = () => {
     const result = useCamera
       ? await ImagePicker.launchCameraAsync(pickerOptions)
       : await ImagePicker.launchImageLibraryAsync({
-          ...pickerOptions,
-          mediaTypes: ["images"],
-        });
+        ...pickerOptions,
+        mediaTypes: ["images"],
+      });
 
     if (!result.canceled) setSelectedImage(result.assets[0].uri);
   };
@@ -95,7 +95,7 @@ export const useCreatePost = () => {
     content,
     setContent,
     selectedImage,
-    isCreating: createPostMutation.isPending,
+
     pickImageFromGallery: () => handleImagePicker(false),
     takePhoto: () => handleImagePicker(true),
     removeImage: () => setSelectedImage(null),

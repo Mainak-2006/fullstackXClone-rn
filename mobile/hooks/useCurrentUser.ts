@@ -6,7 +6,6 @@ export const useCurrentUser = () => {
 
   const {
     data: currentUser,
-    isLoading,
     error,
     refetch,
   } = useQuery({
@@ -15,5 +14,5 @@ export const useCurrentUser = () => {
     select: (response) => response.data.user,
   });
 
-  return { currentUser, isLoading, error, refetch };
+  return { currentUser, error, refetch };
 };

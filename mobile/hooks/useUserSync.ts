@@ -27,7 +27,7 @@ export const useUserSync = () => {
   }, [isLoaded, isSignedIn, syncAttempted]);
 
   return {
-    isLoading: syncUserMutation.isPending,
+
     error: syncUserMutation.error,
     isSuccess: syncUserMutation.isSuccess,
     retry: () => {

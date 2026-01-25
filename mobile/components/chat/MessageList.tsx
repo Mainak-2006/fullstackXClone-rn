@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { View, Text, ScrollView, Image, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, Image } from "react-native";
 import { formatDate } from "../../utils/formatters";
 
 interface Message {
@@ -71,8 +71,8 @@ const MessageList: React.FC<MessageListProps> = ({
                             <View className={`max-w-[75%] ${isMine ? "items-end" : "items-start"}`}>
                                 <View
                                     className={`px-4 py-2.5 rounded-2xl ${isMine
-                                            ? "bg-[#1DA1F2] rounded-tr-none"
-                                            : "bg-gray-100 rounded-tl-none"
+                                        ? "bg-[#1DA1F2] rounded-tr-none"
+                                        : "bg-gray-100 rounded-tl-none"
                                         }`}
                                 >
                                     <Text

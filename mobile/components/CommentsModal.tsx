@@ -9,7 +9,6 @@ import {
   ScrollView,
   Image,
   TextInput,
-  ActivityIndicator,
 } from "react-native";
 
 interface CommentsModalProps {
@@ -18,7 +17,7 @@ interface CommentsModalProps {
 }
 
 const CommentsModal = ({ selectedPost, onClose }: CommentsModalProps) => {
-  const { commentText, setCommentText, createComment, isCreatingComment } = useComments();
+  const { commentText, setCommentText, createComment } = useComments();
   const { currentUser } = useCurrentUser();
 
   const handleClose = () => {
@@ -116,23 +115,16 @@ const CommentsModal = ({ selectedPost, onClose }: CommentsModalProps) => {
                 />
 
                 <TouchableOpacity
-                  className={`px-4 py-2 rounded-lg self-start ${
-                    commentText.trim() ? "bg-blue-500" : "bg-gray-300"
-                  }`}
+                  className={`px-4 py-2 rounded-lg self-start ${commentText.trim() ? "bg-blue-500" : "bg-gray-300"
+                    }`}
                   onPress={() => createComment(selectedPost._id)}
-                  disabled={isCreatingComment || !commentText.trim()}
                 >
-                  {isCreatingComment ? (
-                    <ActivityIndicator size={"small"} color={"white"} />
-                  ) : (
-                    <Text
-                      className={`font-semibold ${
-                        commentText.trim() ? "text-white" : "text-gray-500"
+                  <Text
+                    className={`font-semibold ${commentText.trim() ? "text-white" : "text-gray-500"
                       }`}
-                    >
-                      Reply
-                    </Text>
-                  )}
+                  >
+                    Reply
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>

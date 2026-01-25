@@ -36,6 +36,6 @@ export const useComments = () => {
     commentText,
     setCommentText,
     createComment,
-    isCreatingComment: createCommentMutation.isPending,
+
   };
 };

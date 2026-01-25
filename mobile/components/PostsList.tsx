@@ -1,27 +1,19 @@
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { usePosts } from "@/hooks/usePosts";
 import { Post } from "@/types";
-import { View, Text, ActivityIndicator, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import PostCard from "./PostCard";
 import { useState } from "react";
 import CommentsModal from "./CommentsModal";
 
 const PostsList = ({ username }: { username?: string }) => {
   const { currentUser } = useCurrentUser();
-  const { posts, isLoading, error, refetch, toggleLike, deletePost, checkIsLiked } =
+  const { posts, error, refetch, toggleLike, deletePost, checkIsLiked } =
     usePosts(username);
   const [selectedPostId, setSelectedPostId] = useState<string | null>(null);
 
   const selectedPost = selectedPostId ? posts.find((p: Post) => p._id === selectedPostId) : null;
 
-  if (isLoading) {
-    return (
-      <View className="p-8 items-center">
-        <ActivityIndicator size="large" color="#1DA1F2" />
-        <Text className="text-gray-500 mt-2">Loading posts...</Text>
-      </View>
-    );
-  }
 
   if (error) {
     return (

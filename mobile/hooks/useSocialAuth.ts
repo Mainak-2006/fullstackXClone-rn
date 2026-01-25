@@ -1,9 +1,7 @@
 import { useOAuth } from "@clerk/clerk-expo";
-import { useState } from "react";
 import { Alert } from "react-native";
 
 export const useSocialAuth = () => {
-  const [isLoading, setIsLoading] = useState(false);
   const { startOAuthFlow: startGoogleOAuth } = useOAuth({ strategy: "oauth_google" });
   const { startOAuthFlow: startAppleOAuth } = useOAuth({ strategy: "oauth_apple" });
   const { startOAuthFlow: startFacebookOAuth } = useOAuth({ strategy: "oauth_facebook" });
@@ -11,7 +9,6 @@ export const useSocialAuth = () => {
   const handleSocialAuth = async (
     strategy: "oauth_google" | "oauth_apple" | "oauth_facebook"
   ) => {
-    setIsLoading(true);
     try {
       const startOAuthFlow =
         strategy === "oauth_google"
@@ -29,10 +26,8 @@ export const useSocialAuth = () => {
       const provider =
         strategy === "oauth_google" ? "Google" : strategy === "oauth_apple" ? "Apple" : "Facebook";
       Alert.alert("Error", `Failed to sign in with ${provider}. Please try again.`);
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  return { isLoading, handleSocialAuth };
+  return { handleSocialAuth };
 };

@@ -7,10 +7,8 @@ export const useNotifications = () => {
 
   const {
     data: notificationsData,
-    isLoading,
     error,
     refetch,
-    isRefetching,
   } = useQuery({
     queryKey: ["notifications"],
     queryFn: () => notificationApi.getNotifications(api),
@@ -28,11 +26,8 @@ export const useNotifications = () => {
 
   return {
     notifications: notificationsData || [],
-    isLoading,
     error,
     refetch,
-    isRefetching,
     deleteNotification,
-    isDeletingNotification: deleteNotificationMutation.isPending,
   };
 };

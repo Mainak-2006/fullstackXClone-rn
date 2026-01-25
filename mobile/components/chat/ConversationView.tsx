@@ -1,5 +1,5 @@
 import React from "react";
-import { View, KeyboardAvoidingView, Platform, ActivityIndicator } from "react-native";
+import { View, KeyboardAvoidingView, Platform } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ChatHeader from "./ChatHeader";
 import MessageList from "./MessageList";
@@ -9,7 +9,7 @@ interface ConversationViewProps {
     user: any;
     messages: any[];
     currentUserId?: string;
-    isMessagesLoading: boolean;
+
     isOnline: boolean;
     onBack: () => void;
     newMessage: string;
@@ -21,7 +21,7 @@ const ConversationView: React.FC<ConversationViewProps> = ({
     user,
     messages,
     currentUserId,
-    isMessagesLoading,
+
     isOnline,
     onBack,
     newMessage,
@@ -37,17 +37,11 @@ const ConversationView: React.FC<ConversationViewProps> = ({
                 className="flex-1"
                 keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
             >
-                {isMessagesLoading ? (
-                    <View className="flex-1 items-center justify-center">
-                        <ActivityIndicator size="small" color="#1DA1F2" />
-                    </View>
-                ) : (
-                    <MessageList
-                        messages={messages}
-                        currentUserId={currentUserId}
-                        otherUser={user}
-                    />
-                )}
+                <MessageList
+                    messages={messages}
+                    currentUserId={currentUserId}
+                    otherUser={user}
+                />
 
                 <MessageInput
                     value={newMessage}

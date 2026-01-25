@@ -7,7 +7,7 @@ export const usePosts = (username?: string) => {
 
   const {
     data: postsData,
-    isLoading,
+
     error,
     refetch,
   } = useQuery({
@@ -43,7 +43,7 @@ export const usePosts = (username?: string) => {
 
   return {
     posts: postsData || [],
-    isLoading,
+
     error,
     refetch,
     toggleLike: (postId: string) => likePostMutation.mutate(postId),

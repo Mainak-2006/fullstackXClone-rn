@@ -1,9 +1,9 @@
-import { View, Text, Image, TouchableOpacity, ActivityIndicator } from 'react-native'
+import { View, Text, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { useSocialAuth } from "@/hooks/useSocialAuth";
 
 export default function App() {
-  const { handleSocialAuth, isLoading } = useSocialAuth();
+  const { handleSocialAuth } = useSocialAuth();
   return (
     <View className="flex-1  bg-white">
       <View className="flex-1 px-8 justify-between">
@@ -21,7 +21,7 @@ export default function App() {
             <TouchableOpacity
               className="flex-row items-center justify-center bg-white border border-gray-300 rounded-full py-3 px-6"
               onPress={() => handleSocialAuth("oauth_google")}
-              disabled={isLoading}
+
               style={{
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 1 },
@@ -30,25 +30,22 @@ export default function App() {
                 elevation: 2,
               }}
             >
-              {isLoading ?
-                (<ActivityIndicator size="small" color="#000" />) : (
-                  <View className="flex-row items-center justify-center">
-                    <Image
-                      source={require("../../assets/images/google.png")}
-                      className="size-10 mr-3"
-                      resizeMode="contain"
-                    />
-                    <Text className="text-black font-medium text-base">
-                      Continue with Google</Text>
-                  </View>
-                )}
+              <View className="flex-row items-center justify-center">
+                <Image
+                  source={require("../../assets/images/google.png")}
+                  className="size-10 mr-3"
+                  resizeMode="contain"
+                />
+                <Text className="text-black font-medium text-base">
+                  Continue with Google</Text>
+              </View>
             </TouchableOpacity>
 
             {/*APPLE SIGNIN BUTTON*/}
             <TouchableOpacity
               className="flex-row items-center justify-center bg-white border border-gray-300 rounded-full py-4 px-6"
               onPress={() => handleSocialAuth("oauth_apple")}
-              disabled={isLoading}
+
               style={{
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 1 },
@@ -57,25 +54,22 @@ export default function App() {
                 elevation: 2,
               }}
             >
-              {isLoading ?
-                (<ActivityIndicator size="small" color="#000" />) : (
-                  <View className="flex-row items-center justify-center">
-                    <Image
-                      source={require("../../assets/images/apple.png")}
-                      className="size-8 mr-6 px-4"
-                      resizeMode="contain"
-                    />
-                    <Text className="text-black font-medium text-base">
-                      Continue with Apple</Text>
-                  </View>
-                )}
+              <View className="flex-row items-center justify-center">
+                <Image
+                  source={require("../../assets/images/apple.png")}
+                  className="size-8 mr-6 px-4"
+                  resizeMode="contain"
+                />
+                <Text className="text-black font-medium text-base">
+                  Continue with Apple</Text>
+              </View>
             </TouchableOpacity>
 
             {/*FACEBOOK SIGNIN BUTTON*/}
             <TouchableOpacity
               className="flex-row items-center justify-center bg-white border border-gray-300 rounded-full py-4 px-6"
               onPress={() => handleSocialAuth("oauth_facebook")}
-              disabled={isLoading}
+
               style={{
                 shadowColor: "#000",
                 shadowOffset: { width: 0, height: 1 },
@@ -84,18 +78,14 @@ export default function App() {
                 elevation: 2,
               }}
             >
-              {isLoading ? (
-                <ActivityIndicator size="small" color="#000" />
-              ) : (
-                <View className="flex-row items-center justify-center">
-                  <View className="w-8 h-8  rounded-full bg-[#1877F2] items-center justify-center mr-3">
-                    <Text className="text-white font-bold text-base">f</Text>
-                  </View>
-                  <Text className="text-black font-medium text-base">
-                    Continue with Facebook
-                  </Text>
+              <View className="flex-row items-center justify-center">
+                <View className="w-8 h-8  rounded-full bg-[#1877F2] items-center justify-center mr-3">
+                  <Text className="text-white font-bold text-base">f</Text>
                 </View>
-              )}
+                <Text className="text-black font-medium text-base">
+                  Continue with Facebook
+                </Text>
+              </View>
             </TouchableOpacity>
           </View>
           {/* Terms and Privacy */}

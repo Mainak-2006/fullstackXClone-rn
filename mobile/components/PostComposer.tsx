@@ -1,14 +1,13 @@
 import { useCreatePost } from "@/hooks/useCreatePost";
 import { useUser } from "@clerk/clerk-expo";
 import { Feather } from "@expo/vector-icons";
-import { View, Text, Image, TextInput, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 
 const PostComposer = () => {
   const {
     content,
     setContent,
     selectedImage,
-    isCreating,
     pickImageFromGallery,
     takePhoto,
     removeImage,
@@ -72,27 +71,20 @@ const PostComposer = () => {
           )}
 
           <TouchableOpacity
-            className={`px-6 py-2 rounded-full ${
-              content.trim() || selectedImage ? "bg-blue-500" : "bg-gray-300"
-            }`}
+            className={`px-6 py-2 rounded-full ${content.trim() || selectedImage ? "bg-blue-500" : "bg-gray-300"
+              }`}
             onPress={createPost}
-            disabled={isCreating || !(content.trim() || selectedImage)}
           >
-            {isCreating ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <Text
-                className={`font-semibold ${
-                  content.trim() || selectedImage ? "text-white" : "text-gray-500"
+            <Text
+              className={`font-semibold ${content.trim() || selectedImage ? "text-white" : "text-gray-500"
                 }`}
-              >
-                Post
-              </Text>
-            )}
+            >
+              Post
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </View >
   );
 };
 export default PostComposer;

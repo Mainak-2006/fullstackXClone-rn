@@ -9,14 +9,11 @@ import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
-  const [isRefetching, setIsRefetching] = useState(false);
+
   const { refetch: refetchPosts } = usePosts();
 
   const handlePullToRefresh = async () => {
-    setIsRefetching(true);
-
     await refetchPosts();
-    setIsRefetching(false);
   };
 
   useUserSync();
@@ -35,7 +32,7 @@ const HomeScreen = () => {
         contentContainerStyle={{ paddingBottom: 80 }}
         refreshControl={
           <RefreshControl
-            refreshing={isRefetching}
+            refreshing={false}
             onRefresh={handlePullToRefresh}
             tintColor={"#1DA1F2"}
           />

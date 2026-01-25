@@ -24,8 +24,7 @@ interface ChatState {
     messages: Message[];
     users: User[];
     selectedUser: User | null;
-    isUsersLoading: boolean;
-    isMessagesLoading: boolean;
+
     onlineUsers: string[];
     socket: Socket | null;
     currentUserId: string | null;
@@ -46,33 +45,26 @@ export const useChatStore = create<ChatState>((set, get) => ({
     messages: [],
     users: [],
     selectedUser: null,
-    isUsersLoading: false,
-    isMessagesLoading: false,
+
     onlineUsers: [],
     socket: null,
     currentUserId: null,
 
     getUsers: async (api) => {
-        set({ isUsersLoading: true });
         try {
             const res = await messageApi.getUsers(api);
             set({ users: res.data });
         } catch (error: any) {
             // Error handled by store state
-        } finally {
-            set({ isUsersLoading: false });
         }
     },
 
     getMessages: async (api, userId) => {
-        set({ isMessagesLoading: true });
         try {
             const res = await messageApi.getMessages(api, userId);
             set({ messages: res.data });
         } catch (error: any) {
             // Error handled by store state
-        } finally {
-            set({ isMessagesLoading: false });
         }
     },
 

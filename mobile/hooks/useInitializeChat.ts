@@ -14,7 +14,6 @@ export const useInitializeChat = () => {
         } else if (isLoaded && !isSignedIn) {
             disconnectSocket();
         }
-
         return () => {
             disconnectSocket();
         };

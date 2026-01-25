@@ -9,7 +9,6 @@ import { format } from "date-fns";
 import {
   View,
   Text,
-  ActivityIndicator,
   ScrollView,
   Image,
   TouchableOpacity,
@@ -18,13 +17,12 @@ import {
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ProfileScreens = () => {
-  const { currentUser, isLoading } = useCurrentUser();
+  const { currentUser } = useCurrentUser();
   const insets = useSafeAreaInsets();
 
   const {
     posts: userPosts,
     refetch: refetchPosts,
-    isLoading: isRefetching,
   } = usePosts(currentUser?.username);
 
   const {
@@ -34,17 +32,10 @@ const ProfileScreens = () => {
     formData,
     saveProfile,
     updateFormField,
-    isUpdating,
     refetch: refetchProfile,
   } = useProfile();
 
-  if (isLoading) {
-    return (
-      <View className="flex-1 bg-white items-center justify-center">
-        <ActivityIndicator size="large" color="#1DA1F2" />
-      </View>
-    );
-  }
+  if (!currentUser) return null;
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
@@ -65,7 +56,7 @@ const ProfileScreens = () => {
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
-            refreshing={isRefetching}
+            refreshing={false}
             onRefresh={() => {
               refetchProfile();
               refetchPosts();
@@ -146,7 +137,6 @@ const ProfileScreens = () => {
         formData={formData}
         saveProfile={saveProfile}
         updateFormField={updateFormField}
-        isUpdating={isUpdating}
       />
     </SafeAreaView>
   );

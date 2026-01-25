@@ -52,7 +52,7 @@ export const useProfile = () => {
     closeEditModal: () => setIsEditModalVisible(false),
     saveProfile: () => updateProfileMutation.mutate(formData),
     updateFormField,
-    isUpdating: updateProfileMutation.isPending,
+
     refetch: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
   };
 };

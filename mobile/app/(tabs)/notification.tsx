@@ -8,13 +8,12 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  ActivityIndicator,
   RefreshControl,
 } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 
 const NotificationsScreen = () => {
-  const { notifications, isLoading, error, refetch, isRefetching, deleteNotification } =
+  const { notifications, error, refetch, deleteNotification } =
     useNotifications();
 
   const insets = useSafeAreaInsets();
@@ -46,15 +45,10 @@ const NotificationsScreen = () => {
         contentContainerStyle={{ paddingBottom: 100 + insets.bottom }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={isRefetching} onRefresh={refetch} tintColor={"#1DA1F2"} />
+          <RefreshControl refreshing={false} onRefresh={refetch} tintColor={"#1DA1F2"} />
         }
       >
-        {isLoading ? (
-          <View className="flex-1 items-center justify-center p-8">
-            <ActivityIndicator size="large" color="#1DA1F2" />
-            <Text className="text-gray-500 mt-4">Loading notifications...</Text>
-          </View>
-        ) : notifications.length === 0 ? (
+        {notifications.length === 0 ? (
           <NoNotificationsFound />
         ) : (
           notifications.map((notification: Notification) => (
