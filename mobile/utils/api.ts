@@ -72,38 +72,43 @@ export const useApiClient = (): AxiosInstance => {
 export const userApi = {
   syncUser: (api: AxiosInstance) => api.post("/users/sync"),
   getCurrentUser: (api: AxiosInstance) => api.get("/users/me"),
-  updateProfile: (api: AxiosInstance, data: any) => api.put("/users/profile", data),
-  searchUsers: (api: AxiosInstance, query: string) => api.get(`/users/search-users?query=${query}`),
-  followUser: (api: AxiosInstance, userId: string) => api.post(`/users/follow/${userId}`),
+  updateProfile: (api: AxiosInstance, data: any) => api.put("/users/profile", {
+    bio: encodeURIComponent(data.bio),
+    location: encodeURIComponent(data.location),
+    profilePicture: data.profilePicture ? encodeURIComponent(data.profilePicture) : "",
+    bannerImage: data.bannerImage ? encodeURIComponent(data.bannerImage) : ""
+  }),
+  searchUsers: (api: AxiosInstance, query: string) => api.get(`/users/search-users?query=${encodeURIComponent(query)}`),
+  followUser: (api: AxiosInstance, userId: string) => api.post(`/users/follow/${encodeURIComponent(userId)}`),
   saveSearchHistory: (api: AxiosInstance, query: string, searchedUserId?: string) =>
-    api.post("/users/search-history", { query, searchedUserId }),
+    api.post("/users/search-history", { query: encodeURIComponent(query), searchedUserId: searchedUserId ? encodeURIComponent(searchedUserId) : "" }),
   getSearchHistory: (api: AxiosInstance) => api.get("/users/search-history"),
   clearSearchHistory: (api: AxiosInstance, id?: string) =>
-    api.delete(`/users/search-history${id ? `/${id}` : ""}`),
+    api.delete(`/users/search-history${id ? `/${encodeURIComponent(id)}` : ""}`),
 };
 export const postApi = {
   createPost: (api: AxiosInstance, data: { content: string; image?: string }) =>
-    api.post("/posts", data),
+    api.post("/posts", { content: encodeURIComponent(data.content), image: data.image ? encodeURIComponent(data.image) : "" }),
   getPosts: (api: AxiosInstance) => api.get("/posts"),
-  getUserPosts: (api: AxiosInstance, username: string) => api.get(`/posts/user/${username}`),
-  likePost: (api: AxiosInstance, postId: string) => api.post(`/posts/${postId}/like`),
-  deletePost: (api: AxiosInstance, postId: string) => api.delete(`/posts/${postId}`),
+  getUserPosts: (api: AxiosInstance, username: string) => api.get(`/posts/user/${encodeURIComponent(username)}`),
+  likePost: (api: AxiosInstance, postId: string) => api.post(`/posts/${encodeURIComponent(postId)}/like`),
+  deletePost: (api: AxiosInstance, postId: string) => api.delete(`/posts/${encodeURIComponent(postId)}`),
 };
 
 export const commentApi = {
   createComment: (api: AxiosInstance, postId: string, content: string) =>
-    api.post(`/comments/post/${postId}`, { content }),
+    api.post(`/comments/post/${encodeURIComponent(postId)}`, { content: encodeURIComponent(content) }),
 };
 
 export const followApi = {
-  followUser: (api: AxiosInstance, userId: string) => api.post(`/users/follow/${userId}`),
-  unfollowUser: (api: AxiosInstance, userId: string) => api.post(`/users/unfollow/${userId}`),
-  getFollowers: (api: AxiosInstance, userId: string) => api.get(`/users/${userId}/followers`),
-  getFollowing: (api: AxiosInstance, userId: string) => api.get(`/users/${userId}/following`),
+  followUser: (api: AxiosInstance, userId: string) => api.post(`/users/follow/${encodeURIComponent(userId)}`),
+  unfollowUser: (api: AxiosInstance, userId: string) => api.post(`/users/unfollow/${encodeURIComponent(userId)}`),
+  getFollowers: (api: AxiosInstance, userId: string) => api.get(`/users/${encodeURIComponent(userId)}/followers`),
+  getFollowing: (api: AxiosInstance, userId: string) => api.get(`/users/${encodeURIComponent(userId)}/following`),
 };
 
 export const notificationApi = {
   getNotifications: (api: AxiosInstance) => api.get("/notifications"),
-  deleteNotification: (api: AxiosInstance, notificationId: string) =>
-    api.delete(`/notifications/${notificationId}`),
+  markNotificationAsRead: (api: AxiosInstance, notificationId: string) =>
+    api.post(`/notifications/mark-read/${encodeURIComponent(notificationId)}`),
 };
