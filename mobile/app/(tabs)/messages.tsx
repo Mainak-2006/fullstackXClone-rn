@@ -109,7 +109,12 @@ const MessagesScreen = () => {
       >
         {filteredUsers.length === 0 ? (
           <View className="flex-1 items-center justify-center p-10">
-            <Text className="text-gray-500 text-center">No users found</Text>
+            <Feather name="users" size={48} color="#E1E8ED" className="mb-4" />
+            <Text className="text-xl font-bold text-gray-900 mb-2">No mutual followers</Text>
+            <Text className="text-gray-500 text-center">
+              You can only message users who you follow and who follow you back.
+              Search for people to start following them!
+            </Text>
           </View>
         ) : (
           filteredUsers.map((user) => (

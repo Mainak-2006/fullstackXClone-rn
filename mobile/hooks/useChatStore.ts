@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { io, Socket } from "socket.io-client";
 import { AxiosInstance } from "axios";
+import { Alert } from "react-native";
 import { messageApi } from "../utils/api";
 
 interface Message {
@@ -69,7 +70,7 @@ export const useChatStore = create<ChatState>((set, get) => ({
     },
 
     sendMessage: async (api, messageData) => {
-        const { selectedUser, messages } = get();
+        const { selectedUser } = get();
         if (!selectedUser) return;
 
         try {
@@ -78,6 +79,8 @@ export const useChatStore = create<ChatState>((set, get) => ({
             set({ messages: [...get().messages, res.data] });
         } catch (error: any) {
             console.error("Error sending message:", error?.response?.data || error.message);
+            const errorMsg = error?.response?.data?.error || "Failed to send message";
+            Alert.alert("Message Not Sent", errorMsg);
         }
     },
 
@@ -87,16 +90,21 @@ export const useChatStore = create<ChatState>((set, get) => ({
         const { socket } = get();
         if (socket?.connected) return;
 
-        // Strip /api from the URL for socket connection if it exists
-        const socketUrl = BASE_URL;
+        // Strip /api and any trailing slashes for clean socket connection
+        const socketUrl = BASE_URL.replace(/\/api\/?$/, "").replace(/\/+$/, "");
         console.log("Connecting to socket at:", socketUrl, "with userId:", userId);
 
         const newSocket = io(socketUrl, {
             query: {
                 userId: userId,
             },
-            transports: ["websocket", "polling"], // Try websocket first, fallback to polling
+            // Start with polling and upgrade to websocket for better compatibility
+            transports: ["polling", "websocket"],
             forceNew: true,
+            secure: socketUrl.startsWith("https"),
+            reconnection: true,
+            reconnectionAttempts: 5,
+            reconnectionDelay: 1000,
         });
 
         newSocket.on("connect", () => {
@@ -106,6 +114,13 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
         newSocket.on("connect_error", (error) => {
             console.error("Socket connection error ❌:", error.message);
+
+            // If websocket fails, try to fallback to polling explicitly if not already tried
+            if (newSocket.io.opts.transports?.[0] === "websocket") {
+                console.log("Retrying with polling...");
+                newSocket.io.opts.transports = ["polling", "websocket"];
+                newSocket.connect();
+            }
         });
 
         newSocket.on("getOnlineUsers", (userIds) => {

@@ -8,12 +8,11 @@ const TabsLayout = () => {
   const insets = useSafeAreaInsets();
 
   const { isSignedIn, isLoaded } = useAuth();
+  useInitializeChat();
 
   if (!isLoaded) return null;
 
   if (!isSignedIn) return <Redirect href="/(auth)" />;
-
-  useInitializeChat();
 
   return (
     <Tabs

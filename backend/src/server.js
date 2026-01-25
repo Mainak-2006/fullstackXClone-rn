@@ -16,6 +16,7 @@ import { app, server } from "./lib/socket.js";
 
 app.use(cors());
 app.use(express.json());
+app.set('trust proxy', 1);
 
 app.use(clerkMiddleware());
 
@@ -47,4 +48,4 @@ const startServer = async () => {
 };
 startServer();
 
-export default app;
+export default server;
