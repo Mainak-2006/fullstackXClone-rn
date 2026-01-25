@@ -73,10 +73,11 @@ export const useChatStore = create<ChatState>((set, get) => ({
         if (!selectedUser) return;
 
         try {
+            console.log("Sending message to:", selectedUser._id, messageData);
             const res = await messageApi.sendMessage(api, selectedUser._id, messageData);
-            set({ messages: [...messages, res.data] });
+            set({ messages: [...get().messages, res.data] });
         } catch (error: any) {
-            // Error handled by store state
+            console.error("Error sending message:", error?.response?.data || error.message);
         }
     },
 
@@ -88,17 +89,26 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
         // Strip /api from the URL for socket connection if it exists
         const socketUrl = BASE_URL.endsWith("/api") ? BASE_URL.replace(/\/api$/, "") : BASE_URL;
+        console.log("Connecting to socket at:", socketUrl, "with userId:", userId);
 
         const newSocket = io(socketUrl, {
             query: {
                 userId: userId,
             },
+            transports: ["websocket"], // Force websocket for better compatibility in React Native
         });
-        newSocket.connect();
 
-        set({ socket: newSocket, currentUserId: userId });
+        newSocket.on("connect", () => {
+            console.log("Socket connected ✅", newSocket.id);
+            set({ socket: newSocket, currentUserId: userId });
+        });
+
+        newSocket.on("connect_error", (error) => {
+            console.error("Socket connection error ❌:", error.message);
+        });
 
         newSocket.on("getOnlineUsers", (userIds) => {
+            console.log("Online users updated:", userIds);
             set({ onlineUsers: userIds });
         });
     },
@@ -110,10 +120,22 @@ export const useChatStore = create<ChatState>((set, get) => ({
 
     subscribeToMessages: () => {
         const { selectedUser, socket } = get();
-        if (!socket || !selectedUser) return;
+        if (!socket) {
+            console.warn("Cannot subscribe: socket is null");
+            return;
+        }
+        if (!selectedUser) {
+            console.warn("Cannot subscribe: selectedUser is null");
+            return;
+        }
+
+        // Remove existing listener to avoid duplicates
+        socket.off("newMessage");
 
         socket.on("newMessage", (newMessage) => {
-            const { currentUserId } = get();
+            const { currentUserId, messages } = get();
+            console.log("Received new message:", newMessage);
+
             // only add message if it belongs to the currently selected conversation
             const isRelevant =
                 (newMessage.senderId === selectedUser._id && newMessage.receiverId === currentUserId) ||

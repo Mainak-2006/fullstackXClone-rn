@@ -8,6 +8,7 @@ import {
   unfollowUser,
   getFollowers,
   getFollowing,
+  searchUsers,
 } from "../controllers/user.controller.js";
 import { protectRoute } from "../middleware/auth.middleware.js";
 
@@ -24,5 +25,6 @@ router.post("/follow/:targetUserId", protectRoute, followUser);
 router.post("/unfollow/:targetUserId", protectRoute, unfollowUser);
 router.get("/:userId/followers", protectRoute, getFollowers);
 router.get("/:userId/following", protectRoute, getFollowing);
+router.get("/search-users", protectRoute, searchUsers);
 
 export default router;

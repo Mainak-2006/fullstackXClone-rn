@@ -98,6 +98,7 @@ export const followUser = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     message: isFollowing ? "User unfollowed successfully" : "User followed successfully",
+    isFollowing: !isFollowing,
   });
 });
 
@@ -143,4 +144,27 @@ export const getFollowing = asyncHandler(async (req, res) => {
   if (!user) return res.status(404).json({ error: "User not found" });
 
   res.status(200).json({ following: user.following });
+});
+
+export const searchUsers = asyncHandler(async (req, res) => {
+  const { query } = req.query;
+  const { userId: clerkId } = getAuth(req);
+  const currentUser = await User.findOne({ clerkId });
+
+  const users = await User.find({
+    $and: [
+      { _id: { $ne: currentUser._id } },
+      {
+        $or: [
+          { username: { $regex: query, $options: "i" } },
+          { firstName: { $regex: query, $options: "i" } },
+          { lastName: { $regex: query, $options: "i" } },
+        ],
+      },
+    ],
+  })
+    .select("username firstName lastName profilePicture followers following")
+    .limit(20);
+
+  res.status(200).json(users);
 });

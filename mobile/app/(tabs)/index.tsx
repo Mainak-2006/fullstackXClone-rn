@@ -3,7 +3,6 @@ import PostsList from "@/components/PostsList";
 import SignOutButton from "@/components/SignOutButton";
 import { usePosts } from "@/hooks/usePosts";
 import { useUserSync } from "@/hooks/useUserSync";
-import { useState } from "react";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";

@@ -42,6 +42,8 @@ export const userApi = {
   syncUser: (api: AxiosInstance) => api.post("/users/sync"),
   getCurrentUser: (api: AxiosInstance) => api.get("/users/me"),
   updateProfile: (api: AxiosInstance, data: any) => api.put("/users/profile", data),
+  searchUsers: (api: AxiosInstance, query: string) => api.get(`/users/search-users?query=${query}`),
+  followUser: (api: AxiosInstance, userId: string) => api.post(`/users/follow/${userId}`),
 };
 export const postApi = {
   createPost: (api: AxiosInstance, data: { content: string; image?: string }) =>
